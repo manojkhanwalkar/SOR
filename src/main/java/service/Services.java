@@ -26,6 +26,8 @@ public class Services {
     }
 
     protected void start() {
+
+        System.out.println("Starting SOR services");
         services.stream().forEach(s -> s.init());
 
         services.stream().
@@ -36,6 +38,8 @@ public class Services {
 
     protected void stop()
     {
+
+        System.out.println("Stopping SOR services");
         services.stream().forEach(s->s.destroy());
         services.stream().forEach(s->s.stop());
     }
