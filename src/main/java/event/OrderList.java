@@ -4,6 +4,7 @@ import util.IDGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class OrderList implements Event {
 
@@ -11,6 +12,16 @@ public class OrderList implements Event {
     String listId;
 
     List<Order> orders;
+
+    @Override
+    public String getId() {
+        return listId;
+    }
+
+    @Override
+    public String getParentId() {
+        return parentListId;
+    }
 
     public String getParentListId() {
         return parentListId;
@@ -81,5 +92,19 @@ public class OrderList implements Event {
                 ", listId='" + listId + '\'' +
                 ", orders=" + orders +
                 '}';
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OrderList orderList = (OrderList) o;
+        return listId.equals(orderList.listId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(listId);
     }
 }

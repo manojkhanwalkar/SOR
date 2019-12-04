@@ -2,7 +2,7 @@ package processor;
 
 import event.Event;
 import event.OrderList;
-import sample.SampleEvent;
+
 import service.AbstractBolt;
 
 public class ListSlicerBolt extends AbstractBolt {

@@ -2,12 +2,20 @@ package event;
 
 import util.IDGenerator;
 
+import java.util.Objects;
+
 public class Execution implements Event  {
 
     String symbol;
     String execId;
     String orderId;
     double price;
+
+
+    @Override
+    public String getId() {
+        return execId;
+    }
 
     public String getSymbol() {
         return symbol;
@@ -65,5 +73,18 @@ public class Execution implements Event  {
                 ", orderId='" + orderId + '\'' +
                 ", price=" + price +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Execution execution = (Execution) o;
+        return execId.equals(execution.execId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(execId);
     }
 }

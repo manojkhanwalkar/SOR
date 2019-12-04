@@ -3,7 +3,7 @@ package processor;
 import event.Order;
 import event.OrderList;
 import event.Symbols;
-import sample.SampleEvent;
+
 import service.AbstractSpout;
 
 public class ListSpout extends AbstractSpout {

@@ -2,6 +2,8 @@ package event;
 
 import util.IDGenerator;
 
+import java.util.Objects;
+
 public class Order implements Event {
 
     public enum OrderType { Mkt,Limit};
@@ -13,6 +15,18 @@ public class Order implements Event {
     double price;
     OrderType orderType;
     int qty;
+
+    @Override
+    public String getId() {
+        return orderId;
+    }
+
+    @Override
+    public String getParentId() {
+        return parentOrderId;
+    }
+
+
 
     public int getQty() {
         return qty;
@@ -98,5 +112,18 @@ public class Order implements Event {
                 ", orderType=" + orderType +
                 ", qty=" + qty +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Order order = (Order) o;
+        return orderId.equals(order.orderId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(orderId);
     }
 }
