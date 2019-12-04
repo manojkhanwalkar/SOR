@@ -1,6 +1,9 @@
 package service;
 
+import processor.ExecutionCreatorBolt;
+import processor.ListSlicerBolt;
 import processor.ListSpout;
+import processor.OrderSlicerBolt;
 import sample.SampleBolt1;
 import sample.SampleBolt2;
 import sample.SampleSpout;
@@ -16,9 +19,11 @@ public class SOR implements Runnable {
        // for (int i=0;i<5;i++) {
             Topology.TopologyBuilder builder = new Topology.TopologyBuilder();
             Spout spout = new ListSpout();
-            Bolt bolt1 = new SampleBolt1();
-            Bolt bolt2 = new SampleBolt2();
-            builder.addSpout(spout).addBolt(bolt1, "ListSpout").addBolt(bolt2, "SampleBolt1");
+            Bolt listSlicerBolt = new ListSlicerBolt();
+            Bolt bolt = new SampleBolt2();
+            builder.addSpout(spout).addBolt(listSlicerBolt, "ListSpout").addBolt(new OrderSlicerBolt(), "ListSlicerBolt")
+                    .addBolt(new ExecutionCreatorBolt(),"OrderSlicerBolt")
+                    .addBolt(bolt,"ExecutionCreatorBolt");
             Topology topology = builder.build();
             eventService.register(topology);
 

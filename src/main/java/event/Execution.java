@@ -52,7 +52,7 @@ public class Execution implements Event  {
         execution.setExecId(IDGenerator.getInstance().getId(IDGenerator.Type.Execution));
         execution.setOrderId(order.getOrderId());
         execution.setSymbol(order.getSymbol());
-        execution.setPrice(marketData.getPrice());
+        execution.setPrice(order.getPrice());
         return execution;
 
     }
