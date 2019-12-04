@@ -11,6 +11,13 @@ public class SampleBolt2 extends AbstractBolt {
 
         // no emit so event terminates
 
+
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

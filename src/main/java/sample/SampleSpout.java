@@ -9,7 +9,10 @@ public class SampleSpout extends AbstractSpout {
     {
         System.out.println("Sample Spout " + Thread.currentThread().getName());
 
-        emit("SampleSpout" , new SampleEvent());
+        for (int i=0;i<10;i++) {
+            emit("SampleSpout", new SampleEvent());
+
+        }
     }
 
 }

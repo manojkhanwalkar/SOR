@@ -11,6 +11,12 @@ public class SampleBolt1 extends AbstractBolt {
         System.out.println("Sample Bolt " + Thread.currentThread().getName() + event);
 
         emit("SampleBolt1" , new SampleEvent());
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 }

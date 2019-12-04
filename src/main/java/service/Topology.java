@@ -4,6 +4,7 @@ import event.Event;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 public class Topology {
 
@@ -31,15 +32,20 @@ public class Topology {
     }
 
     public void forward(String name, Event event) {
-        Bolt bolt = bolts.get(name);
-        if (bolt!=null)
-        {
-            bolt.process(event);
-        }
-        else
-        {
-            System.out.println("Event cannot be forwarded for " + name);
-        }
+
+        CompletableFuture cf = CompletableFuture.runAsync(()->{
+            Bolt bolt = bolts.get(name);
+            if (bolt!=null)
+            {
+                bolt.process(event);
+            }
+            else
+            {
+                System.out.println("Event cannot be forwarded for " + name);
+            }
+
+        });
+
     }
 
     static class TopologyBuilder

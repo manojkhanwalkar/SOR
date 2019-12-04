@@ -4,7 +4,15 @@ import java.util.Calendar;
 
 public class IDGenerator {
 
-    public enum Type { Order, Execution , MarketData}
+    private IDGenerator() {}
+
+    private static IDGenerator generator = new IDGenerator();
+    public static IDGenerator getInstance()
+    {
+        return generator;
+    }
+
+    public enum Type { Order, Execution , MarketData, List}
 
 
     public String getId(Type type)
@@ -34,6 +42,9 @@ public class IDGenerator {
 
             case MarketData:
                 c='M';
+
+            case List:
+                c='L';
 
         }
         builder.append(c);
