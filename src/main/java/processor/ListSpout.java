@@ -4,9 +4,9 @@ import event.Order;
 import event.OrderList;
 import event.Symbols;
 
-import service.AbstractSpout;
+import service.AbstractSpoutSync;
 
-public class ListSpout extends AbstractSpout {
+public class ListSpout extends AbstractSpoutSync {
 
     public void process()
     {
@@ -16,8 +16,10 @@ public class ListSpout extends AbstractSpout {
 
             OrderList list = OrderList.createParentList();
 
+
+
         for (Symbols symbol : Symbols.values()) {
-            Order order = Order.createParentOrder(symbol.name(), 100.0, Order.OrderType.Mkt, 10000);
+            Order order = Order.createParentOrder(symbol.name(), 100.0, Order.OrderType.Mkt, 10000, list.getListId());
             list.addOrder(order);
         }
             emit("ListSpout", list);

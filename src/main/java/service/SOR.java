@@ -13,11 +13,11 @@ public class SOR implements Runnable {
        // for (int i=0;i<5;i++) {
             Topology.TopologyBuilder builder = new Topology.TopologyBuilder();
             Spout spout = new ListSpout();
-            Bolt listSlicerBolt = new ListSlicerBolt();
-            Bolt bolt = new SysOutBolt();
-            builder.addSpout(spout).addBolt(listSlicerBolt, "ListSpout").addBolt(new OrderSlicerBolt(), "ListSlicerBolt")
-                    .addBolt(new ExecutionCreatorBolt(),"OrderSlicerBolt")
-                    .addBolt(bolt,"ExecutionCreatorBolt");
+            Bolt listSlicerBolt = new ListSlicerBoltSync();
+            Bolt bolt = new SysOutBoltSync();
+            builder.addSpout(spout).addBolt(listSlicerBolt, "ListSpout").addBolt(new OrderSlicerBoltSync(), "ListSlicerBoltSync")
+                    .addBolt(new ExecutionCreatorBoltSync(),"OrderSlicerBoltSync")
+                    .addBolt(bolt,"ExecutionCreatorBoltSync");
             Topology topology = builder.build();
             eventService.register(topology);
 

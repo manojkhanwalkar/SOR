@@ -11,8 +11,13 @@ public class OrderList implements Event {
     String parentListId ;
     String listId;
 
-    List<Order> orders;
+    List<? extends Event> orders;
 
+    @Override
+    public List<Event> getRelatedEvents()
+    {
+        return (List<Event>)orders;
+    }
     @Override
     public String getId() {
         return listId;
@@ -40,7 +45,7 @@ public class OrderList implements Event {
     }
 
     public List<Order> getOrders() {
-        return orders;
+        return (List<Order>)orders;
     }
 
     public void setOrders(List<Order> orders) {
@@ -53,7 +58,9 @@ public class OrderList implements Event {
         {
             orders = new ArrayList<>();
         }
-        this.orders.add(order);
+
+        List tmp = orders;
+        tmp.add(order);
     }
 
     private OrderList()

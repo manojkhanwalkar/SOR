@@ -45,6 +45,11 @@ public class EventProcessingService implements Service {
     @Override
     public void stop() {
 
+        topologies.stream().forEach(t->{
+
+            t.getGraph().printBreadth();
+        });
+
     }
 
 

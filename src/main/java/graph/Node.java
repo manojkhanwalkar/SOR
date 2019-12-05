@@ -68,4 +68,13 @@ public class Node {
     public int hashCode() {
         return Objects.hash(event);
     }
+
+    @Override
+    public String toString() {
+        return "Node{" +
+                "event=" + event +
+                ", children=" + children +
+                ", related=" + related +
+                '}';
+    }
 }

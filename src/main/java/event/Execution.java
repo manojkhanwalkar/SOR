@@ -17,6 +17,13 @@ public class Execution implements Event  {
         return execId;
     }
 
+    @Override
+    public String getParentId()
+    {
+        return orderId;
+    }
+
+
     public String getSymbol() {
         return symbol;
     }

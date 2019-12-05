@@ -15,6 +15,7 @@ public class Order implements Event {
     double price;
     OrderType orderType;
     int qty;
+    String listId;
 
     @Override
     public String getId() {
@@ -23,7 +24,16 @@ public class Order implements Event {
 
     @Override
     public String getParentId() {
-        return parentOrderId;
+        if (parentOrderId!=null)
+            return parentOrderId;
+        else if (listId!=null)
+            return listId;
+        else
+        {
+            System.out.println("Both parent order id and list id are null ");
+            return null;
+        }
+
     }
 
 
@@ -76,7 +86,15 @@ public class Order implements Event {
         this.orderType = orderType;
     }
 
-    public static Order createParentOrder(String symbol, double price, OrderType orderType, int qty)
+    public String getListId() {
+        return listId;
+    }
+
+    public void setListId(String listId) {
+        this.listId = listId;
+    }
+
+    public static Order createParentOrder(String symbol, double price, OrderType orderType, int qty, String listId)
     {
         Order order = new Order();
         order.setOrderId(IDGenerator.getInstance().getId(IDGenerator.Type.Order));
@@ -85,6 +103,7 @@ public class Order implements Event {
         order.setSymbol(symbol);
         order.setOrderType(orderType);
         order.setQty(qty);
+        order.setListId(listId);
         return order;
     }
 

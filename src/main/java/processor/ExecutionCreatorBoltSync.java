@@ -1,13 +1,13 @@
 package processor;
 
 import event.*;
-import service.AbstractBolt;
+import service.AbstractBoltSync;
 
-public class ExecutionCreatorBolt extends AbstractBolt {
+public class ExecutionCreatorBoltSync extends AbstractBoltSync {
 
     public void process(Event event)
     {
-        System.out.println("ExecutionCreatorBolt  " + Thread.currentThread().getName() + event);
+        System.out.println("ExecutionCreatorBoltSync  " + Thread.currentThread().getName() + event);
 
         Order order = (Order) event;
 
@@ -16,7 +16,7 @@ public class ExecutionCreatorBolt extends AbstractBolt {
             for (int i=0;i<5;i++)
             {
                 Execution execution = Execution.createExecution(order,new MarketData());
-                emit("ExecutionCreatorBolt" , execution);
+                emit("ExecutionCreatorBoltSync" , execution);
             }
 
 

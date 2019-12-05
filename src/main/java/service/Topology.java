@@ -1,12 +1,15 @@
 package service;
 
 import event.Event;
+import graph.TransactionGraph;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class Topology {
+
+    TransactionGraph graph = new TransactionGraph();
 
     private Topology(Spout spout, Map<String,Bolt> bolts)
     {
@@ -22,12 +25,31 @@ public class Topology {
         spout.process();
     }
 
-
+    public TransactionGraph getGraph() {
+        return graph;
+    }
 
     public void setEventService() {
 
         spout.setEventService(this);
         bolts.values().stream().forEach(b->b.setEventService(this));
+
+    }
+
+    public void forwardSync(String name, Event event) {
+
+            graph.add(event);
+
+            Bolt bolt = bolts.get(name);
+            if (bolt!=null)
+            {
+                bolt.process(event);
+            }
+            else
+            {
+                System.out.println("Event cannot be forwarded for " + name);
+            }
+
 
     }
 

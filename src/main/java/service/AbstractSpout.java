@@ -15,6 +15,6 @@ public abstract class AbstractSpout implements Spout  {
 
     protected void emit(String name, Event event)
     {
-            topology.forward(name,event);
+            topology.forwardSync(name,event);
     }
 }
