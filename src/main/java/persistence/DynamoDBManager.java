@@ -69,13 +69,12 @@ public class DynamoDBManager {
         ArrayList<AttributeDefinition> attributeDefinitions= new ArrayList<>();
         attributeDefinitions.add(new AttributeDefinition().withAttributeName("orderId").withAttributeType("S"));
         attributeDefinitions.add(new AttributeDefinition().withAttributeName("parentOrderId").withAttributeType("S"));
+        attributeDefinitions.add(new AttributeDefinition().withAttributeName("listId").withAttributeType("S"));
         //   attributeDefinitions.add(new AttributeDefinition().withAttributeName("price").withAttributeType("N"));
 
         ArrayList<KeySchemaElement> tableKeySchema = new ArrayList<KeySchemaElement>();
         tableKeySchema.add(new KeySchemaElement().withAttributeName("orderId").withKeyType(KeyType.HASH));  //Partition key
 
-        ArrayList<KeySchemaElement> indexKeySchema = new ArrayList<>();
-        indexKeySchema.add(new KeySchemaElement().withAttributeName("parentOrderId").withKeyType(KeyType.HASH));
 
 
         ArrayList<String> nonKeyAttributes = new ArrayList<String>();
@@ -86,8 +85,26 @@ public class DynamoDBManager {
         nonKeyAttributes.add("qty");
         nonKeyAttributes.add("listId");
 
+        ArrayList<KeySchemaElement> indexKeySchema = new ArrayList<>();
+        indexKeySchema.add(new KeySchemaElement().withAttributeName("parentOrderId").withKeyType(KeyType.HASH));
 
-        createTable("Order",attributeDefinitions,tableKeySchema,nonKeyAttributes,indexKeySchema,"OrderIndex");
+
+        IndexHolder holder = new IndexHolder();
+        holder.setIndexKeySchema(indexKeySchema);
+        holder.setIndexName("OrderIndex");
+
+        ArrayList<KeySchemaElement> indexKeySchema1 = new ArrayList<>();
+        indexKeySchema1.add(new KeySchemaElement().withAttributeName("listId").withKeyType(KeyType.HASH));
+
+
+        IndexHolder holder1 = new IndexHolder();
+        holder1.setIndexKeySchema(indexKeySchema1);
+        holder1.setIndexName("ListIndex");
+
+
+
+
+        createTable("Order",attributeDefinitions,tableKeySchema,nonKeyAttributes,List.of(holder,holder1));
 
     }
 
@@ -113,7 +130,11 @@ public class DynamoDBManager {
         nonKeyAttributes.add("orderids");
 
 
-        createTable("List",attributeDefinitions,tableKeySchema,nonKeyAttributes,indexKeySchema,"ListIndex");
+        IndexHolder holder = new IndexHolder();
+        holder.setIndexKeySchema(indexKeySchema);
+        holder.setIndexName("ListIndex");
+
+        createTable("List",attributeDefinitions,tableKeySchema,nonKeyAttributes,List.of(holder));
 
 
 
@@ -140,13 +161,40 @@ public class DynamoDBManager {
         // nonKeyAttributes.add("execId");
         nonKeyAttributes.add("price");
 
-        createTable("Execution",attributeDefinitions,tableKeySchema,nonKeyAttributes,indexKeySchema,"OrderIndex");
+        IndexHolder holder = new IndexHolder();
+        holder.setIndexKeySchema(indexKeySchema);
+        holder.setIndexName("OrderIndex");
+
+        createTable("Execution",attributeDefinitions,tableKeySchema,nonKeyAttributes,List.of(holder));
+    }
+
+    class IndexHolder
+    {
+        List<KeySchemaElement> indexKeySchema ;
+        String indexName;
+
+        public List<KeySchemaElement> getIndexKeySchema() {
+            return indexKeySchema;
+        }
+
+        public void setIndexKeySchema(List<KeySchemaElement> indexKeySchema) {
+            this.indexKeySchema = indexKeySchema;
+        }
+
+        public String getIndexName() {
+            return indexName;
+        }
+
+        public void setIndexName(String indexName) {
+            this.indexName = indexName;
+        }
     }
 
 
     private void createTable(String tableName,List<AttributeDefinition> attributeDefinitions,
                              List<KeySchemaElement> tableKeySchema,List<String> nonKeyAttributes,
-                             List<KeySchemaElement> indexKeySchema, String indexName)
+                             List<IndexHolder> indexHolders )
+                          //   List<KeySchemaElement> indexKeySchema, String indexName)
     {
 
         CreateTableRequest createTableRequest = new CreateTableRequest().withTableName(tableName);
@@ -163,15 +211,23 @@ public class DynamoDBManager {
 
         projection.setNonKeyAttributes(nonKeyAttributes);
 
-
-
-
-        GlobalSecondaryIndex localSecondaryIndex = new GlobalSecondaryIndex()
-                .withIndexName(indexName).withKeySchema(indexKeySchema).withProvisionedThroughput(new ProvisionedThroughput(
-                        new Long(5), new Long(5))).withProjection(projection);
-
         ArrayList<GlobalSecondaryIndex> globalSecondaryIndexes = new ArrayList<GlobalSecondaryIndex>();
-        globalSecondaryIndexes.add(localSecondaryIndex);
+
+        indexHolders.stream().forEach(holder-> {
+            String indexName = holder.getIndexName();
+            List<KeySchemaElement> indexKeySchema = holder.getIndexKeySchema();
+
+            GlobalSecondaryIndex localSecondaryIndex = new GlobalSecondaryIndex()
+                    .withIndexName(indexName).withKeySchema(indexKeySchema).withProvisionedThroughput(new ProvisionedThroughput(
+                            new Long(5), new Long(5))).withProjection(projection);
+
+            globalSecondaryIndexes.add(localSecondaryIndex);
+
+        });
+
+
+
+
         createTableRequest.setGlobalSecondaryIndexes(globalSecondaryIndexes);
 
         createTableRequest.setProvisionedThroughput(new ProvisionedThroughput().withReadCapacityUnits((long)5).withWriteCapacityUnits((long)5));
@@ -196,10 +252,14 @@ public class DynamoDBManager {
 
         DynamoDBManager dbManager = new DynamoDBManager();
 
+        dbManager.deleteTable("Order");
+        dbManager.deleteTable("List");
+        dbManager.deleteTable("Execution");
 
-        //dbManager.deleteTable("Order");
-       // dbManager.createExecutionTable();
-        //dbManager.createOrderTable();
+
+
+        dbManager.createExecutionTable();
+        dbManager.createOrderTable();
         dbManager.createOrderListTable();
     }
 
