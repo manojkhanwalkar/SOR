@@ -1,5 +1,6 @@
 package event;
 
+import persistence.ExecutionRecord;
 import util.IDGenerator;
 
 import java.util.Objects;
@@ -70,6 +71,16 @@ public class Execution implements Event  {
         execution.setPrice(order.getPrice());
         return execution;
 
+    }
+
+    public static Execution createExecution(ExecutionRecord executionRecord)
+    {
+        Execution execution = new Execution();
+        execution.setPrice(executionRecord.getPrice());
+        execution.setSymbol(executionRecord.getSymbol());
+        execution.setOrderId(executionRecord.getOrderId());
+        execution.setExecId(executionRecord.getExecId());
+        return execution;
     }
 
     @Override

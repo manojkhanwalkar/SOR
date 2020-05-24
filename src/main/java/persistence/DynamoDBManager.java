@@ -5,26 +5,25 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.model.*;
+import event.Event;
+import event.Execution;
+import event.Order;
+import graph.TransactionGraph;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DynamoDBManager {
 
-    // create Execution  , Order and OrderList tables.
 
-    // Execution has secondary key of orderId and primary key of execId .
-
-    // Order has secondary keys of parent orderid and listId
-
-    // list Id has secondary keys of parentListID .
 
     // Take the TransactionGraph and persist the individual events based on type by navigating each object in the graph - implement an iterator in the graph to help with the traversal .
 
     // rebuild the transaction graph from the persisted data
 
-    // query execution by executionId
+    //
     // query order by orderId
     // query orders by parentorderid
     // query orders by listId
@@ -61,6 +60,40 @@ public class DynamoDBManager {
 
     }
 
+    //query execution by executionId
+
+
+    public void putExecution(Execution execution)
+    {
+        ExecutionRecord record = new ExecutionRecord(execution);
+        mapper.save(record);
+    }
+
+    public Execution getExecution(String execId)
+    {
+        ExecutionRecord executionRecord = mapper.load(ExecutionRecord.class , execId);
+        return Execution.createExecution(executionRecord);
+    }
+
+    public void cleanAllRecords(Class<?> clazz)
+    {
+    /*    final AmazonDynamoDB ddb = getHandle();
+        DynamoDBMapper mapper = new DynamoDBMapper(ddb);*/
+
+        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+        var scanResult = mapper.scan(clazz, scanExpression);
+
+        scanResult.stream().forEach(r-> {
+            mapper.delete(r);
+            System.out.println("Deleted " + r);
+        });
+    }
+
+
+    public void putOrder(Order order)
+    {
+
+    }
 
 
 
@@ -168,6 +201,24 @@ public class DynamoDBManager {
         createTable("Execution",attributeDefinitions,tableKeySchema,nonKeyAttributes,List.of(holder));
     }
 
+    public void persist(TransactionGraph graph) {
+
+        // look at each type of object and create a record of that type and save it in the table .
+
+        graph.nodes.values().stream().forEach(node -> {
+
+            Event event  = node.getEvent();
+
+            if (event instanceof Execution)
+            {
+                putExecution((Execution)event);
+            }
+
+        });
+    }
+
+
+
     class IndexHolder
     {
         List<KeySchemaElement> indexKeySchema ;
@@ -252,7 +303,11 @@ public class DynamoDBManager {
 
         DynamoDBManager dbManager = new DynamoDBManager();
 
-        dbManager.deleteTable("Order");
+        dbManager.cleanAllRecords(ExecutionRecord.class);
+
+
+
+      /*  dbManager.deleteTable("Order");
         dbManager.deleteTable("List");
         dbManager.deleteTable("Execution");
 
@@ -260,7 +315,7 @@ public class DynamoDBManager {
 
         dbManager.createExecutionTable();
         dbManager.createOrderTable();
-        dbManager.createOrderListTable();
+        dbManager.createOrderListTable();*/
     }
 
 }

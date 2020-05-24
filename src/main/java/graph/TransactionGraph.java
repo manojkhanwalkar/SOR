@@ -16,7 +16,7 @@ public class TransactionGraph {
 
     }
 
-    Map<String,Node> nodes = new HashMap<>();
+    public Map<String,Node> nodes = new HashMap<>();
 
     public synchronized void add(Event event)
     {

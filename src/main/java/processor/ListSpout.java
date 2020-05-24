@@ -25,6 +25,11 @@ public class ListSpout extends AbstractSpoutSync {
             emit("ListSpout", list);
 
       //  }
+
+        persist();
     }
+
+
+
 
 }

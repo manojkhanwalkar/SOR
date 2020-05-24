@@ -1,6 +1,7 @@
 package service;
 
 import event.Event;
+import persistence.DynamoDBManager;
 
 public abstract class AbstractSpoutSync implements Spout  {
 
@@ -16,5 +17,11 @@ public abstract class AbstractSpoutSync implements Spout  {
     protected void emit(String name, Event event)
     {
             topology.forwardSync(name,event);
+    }
+
+    DynamoDBManager manager = new DynamoDBManager();
+    protected void persist()
+    {
+        manager.persist(topology.getGraph());
     }
 }

@@ -4,6 +4,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import event.Event;
+import event.Execution;
 import event.MarketData;
 import event.Order;
 import util.IDGenerator;
@@ -13,7 +14,7 @@ import java.util.Objects;
 
 @DynamoDBTable(tableName="Execution")
 
-public class ExecutionRecord implements Event  {
+public class ExecutionRecord   {
 
 
 
@@ -24,24 +25,24 @@ public class ExecutionRecord implements Event  {
     String execId;
 
 
-    @DynamoDBHashKey(attributeName = "orderId")
+    @DynamoDBAttribute(attributeName = "orderId")
     String orderId;
 
 
     @DynamoDBAttribute(attributeName="price")
     double price;
 
+    public ExecutionRecord(Execution execution) {
 
-    @Override
-    public String getId() {
-        return execId;
+        symbol= execution.getSymbol();
+        execId = execution.getExecId();
+        orderId = execution.getOrderId();
+        price = execution.getPrice();
     }
 
-    @Override
-    public String getParentId()
-    {
-        return orderId;
-    }
+
+
+
 
 
     public String getSymbol() {
