@@ -13,7 +13,8 @@ public class JSONUtil {
 
     static {
         mapper.registerModule(new JavaTimeModule());
-        mapper.enableDefaultTyping();
+        // Default typing is deliberately NOT enabled: polymorphic type ids taken from stored documents
+        // let whoever can write to Solr choose which classes Jackson instantiates (deserialization gadgets).
     }
 
 

@@ -1,5 +1,7 @@
 package event;
 
+import util.Mask;
+
 public class CHFDataRecord implements Event  {
 
     static final int RecordLength = 59;
@@ -30,7 +32,9 @@ public class CHFDataRecord implements Event  {
     {
         CHFDataRecord dataRecord = new CHFDataRecord();
 
-        dataRecord.dataRecord = line.toCharArray();
+        // copy into the fixed-width buffer so short or over-long lines cannot cause out-of-bounds reads
+        char[] chars = line.toCharArray();
+        System.arraycopy(chars, 0, dataRecord.dataRecord, 0, Math.min(chars.length, RecordLength));
 
         return dataRecord;
 
@@ -146,9 +150,12 @@ public class CHFDataRecord implements Event  {
      }
  }
 
+ // Never print the raw record: it holds personal data (names).
  public String toString()
  {
-     return getRecord();
+     return "CHFDataRecord{ein=" + new String(dataRecord, 0, 10).trim()
+             + ", fname=" + Mask.name(new String(dataRecord, 10, 20).trim())
+             + ", lname=" + Mask.name(new String(dataRecord, 30, RecordLength - 30).trim()) + '}';
  }
 
  public String getRecord()

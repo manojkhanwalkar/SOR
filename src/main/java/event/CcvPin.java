@@ -1,5 +1,7 @@
 package event;
 
+import util.Mask;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.solr.client.solrj.beans.Field;
 
@@ -43,9 +45,9 @@ public class CcvPin {
     @Override
     public String toString() {
         return "CcvPin{" +
-                "ccv='" + ccv + '\'' +
+                "ccv='" + Mask.last4(ccv) + '\'' +
                 ", ein=" + ein +
-                ", tin=" + tin +
+                ", tin=" + Mask.full(tin) +
                 '}';
     }
 }

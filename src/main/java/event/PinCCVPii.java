@@ -1,5 +1,7 @@
 package event;
 
+import util.Mask;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.solr.client.solrj.beans.Field;
@@ -59,10 +61,10 @@ public class PinCCVPii implements Event {
     @Override
     public String toString() {
         return "PinCCVPii{" +
-                "ccv='" + ccv + '\'' +
+                "ccv='" + Mask.last4(ccv) + '\'' +
                 ", ein=" + ein +
-                ", FName='" + FName + '\'' +
-                ", LName='" + LName + '\'' +
+                ", FName='" + Mask.name(FName) + '\'' +
+                ", LName='" + Mask.name(LName) + '\'' +
                 '}';
     }
 
