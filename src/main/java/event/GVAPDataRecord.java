@@ -1,5 +1,7 @@
 package event;
 
+import util.Mask;
+
 public class GVAPDataRecord  implements Event{
 
     @Override
@@ -30,7 +32,9 @@ public class GVAPDataRecord  implements Event{
     {
         GVAPDataRecord dataRecord = new GVAPDataRecord();
 
-        dataRecord.dataRecord = line.toCharArray();
+        // copy into the fixed-width buffer so short or over-long lines cannot cause out-of-bounds reads
+        char[] chars = line.toCharArray();
+        System.arraycopy(chars, 0, dataRecord.dataRecord, 0, Math.min(chars.length, RecordLength));
 
         return dataRecord;
 
@@ -142,9 +146,12 @@ public class GVAPDataRecord  implements Event{
      }
  }
 
+ // Never print the raw record: it holds a card number (PAN) and a tax id.
  public String toString()
  {
-     return getRecord();
+     return "GVAPDataRecord{ein=" + new String(dataRecord, 0, 10).trim()
+             + ", tin=" + Mask.full(new String(dataRecord, 10, 20).trim())
+             + ", pan=" + Mask.last4(new String(dataRecord, 30, RecordLength - 30).trim()) + '}';
  }
 
  public String getRecord()
